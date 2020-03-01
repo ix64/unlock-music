@@ -1,4 +1,9 @@
 module.exports = {
     publicPath: '',
-    productionSourceMap: true
+    productionSourceMap: true,
+    pwa: {
+        workboxOptions: {
+            skipWaiting: true
+        }
+    }
 };

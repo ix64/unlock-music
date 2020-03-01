@@ -1,89 +1,79 @@
-const musicMetadata = require("music-metadata-browser");
-const util = require("./util");
-export {Decrypt}
-const SEED_MAP = [
-    [0x4a, 0xd6, 0xca, 0x90, 0x67, 0xf7, 0x52],
-    [0x5e, 0x95, 0x23, 0x9f, 0x13, 0x11, 0x7e],
-    [0x47, 0x74, 0x3d, 0x90, 0xaa, 0x3f, 0x51],
-    [0xc6, 0x09, 0xd5, 0x9f, 0xfa, 0x66, 0xf9],
-    [0xf3, 0xd6, 0xa1, 0x90, 0xa0, 0xf7, 0xf0],
-    [0x1d, 0x95, 0xde, 0x9f, 0x84, 0x11, 0xf4],
-    [0x0e, 0x74, 0xbb, 0x90, 0xbc, 0x3f, 0x92],
-    [0x00, 0x09, 0x5b, 0x9f, 0x62, 0x66, 0xa1]];
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetCoverURL, GetFileInfo} from "./util";
+import {QmcMaskCreate58, QmcMaskGetDefault, QmcMaskDetectMgg, QmcMaskDetectMflac} from "./qmcMask";
 
-const OriginalExtMap = {
-    "qmc0": "mp3",
-    "qmc3": "mp3",
-    "qmcogg": "ogg",
-    "qmcflac": "flac",
-    "bkcmp3": "mp3",
-    "bkcflac": "flac",
-    "tkm": "m4a"
+const musicMetadata = require("music-metadata-browser");
+
+const HandlerMap = {
+    "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
+    "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
+    "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "qmcogg": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
+    "qmcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
+    "bkcmp3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
+    "bkcflac": {handler: QmcMaskGetDefault, ext: "flac", detect: false},
+    "tkm": {handler: QmcMaskGetDefault, ext: "m4a", detect: false}
 };
 
-async function Decrypt(file, raw_filename, raw_ext) {
-    // 获取扩展名
-    if (!(raw_ext in OriginalExtMap)) {
-        return {status: false, message: "File type is incorrect!"}
-    }
-    let new_ext = OriginalExtMap[raw_ext]
-    const mime = util.AudioMimeType[new_ext];
-    // 读取文件
-    const fileBuffer = await util.GetArrayBuffer(file);
-    const audioData = new Uint8Array(fileBuffer);
-    // 转换数据
-    const seed = new Mask();
-    for (let cur = 0; cur < audioData.length; ++cur) {
-        audioData[cur] ^= seed.NextMask();
-    }
-    // 导出
-    const musicData = new Blob([audioData], {type: mime});
-    const musicUrl = URL.createObjectURL(musicData);
-    // 读取Meta
-    let tag = await musicMetadata.parseBlob(musicData);
-    const info = util.GetFileInfo(tag.common.artist, tag.common.title, raw_filename, new_ext);
-    let picUrl = util.GetCoverURL(tag);
+export async function Decrypt(file, raw_filename, raw_ext) {
+    if (!(raw_ext in HandlerMap)) return {status: false, message: "File type is incorrect!"};
+    const handler = HandlerMap[raw_ext];
 
-    // 返回
+    const fileData = new Uint8Array(await GetArrayBuffer(file));
+    let audioData, seed, keyData;
+    if (handler.detect) {
+        audioData = fileData.slice(0, -0x170);
+        seed = handler.handler(audioData);
+        keyData = fileData.slice(-0x170);
+        if (seed === undefined) seed = await queryKeyInfo(keyData, raw_filename, raw_ext);
+        if (seed === undefined) return {status: false, message: raw_ext + "格式仅提供实验性支持！"};
+    } else {
+        audioData = fileData;
+        seed = handler.handler(audioData);
+    }
+    const dec = seed.Decrypt(audioData);
+
+    const ext = DetectAudioExt(dec, handler.ext);
+    const mime = AudioMimeType[ext];
+
+    const musicData = new Blob([dec], {type: mime});
+
+    const tag = await musicMetadata.parseBlob(musicData);
+    const info = GetFileInfo(tag.common.artist, tag.common.title, raw_filename);
+    if (handler.detect) reportKeyUsage(keyData, seed.Matrix128,
+        info.artist, info.title, tag.common.album, raw_filename, raw_ext);
     return {
         status: true,
-        filename: info.filename,
         title: info.title,
         artist: info.artist,
+        ext: ext,
         album: tag.common.album,
-        picture: picUrl,
-        file: musicUrl,
+        picture: GetCoverURL(tag),
+        file: URL.createObjectURL(musicData),
         mime: mime
     }
 }
 
-class Mask {
-    constructor() {
-        this.x = -1;
-        this.y = 8;
-        this.dx = 1;
-        this.index = -1;
-    }
+function reportKeyUsage(keyData, maskData, artist, title, album, filename, format) {
+    fetch("https://stats.ixarea.com/collect/qmcmask/usage", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            Mask: Array.from(maskData), Key: Array.from(keyData),
+            Artist: artist, Title: title, Album: album, Filename: filename, Format: format
+        }),
+    }).then().catch()
+}
 
-    NextMask() {
-        let ret;
-        this.index++;
-        if (this.x < 0) {
-            this.dx = 1;
-            this.y = (8 - this.y) % 8;
-            ret = 0xc3
-        } else if (this.x > 6) {
-            this.dx = -1;
-            this.y = 7 - this.y;
-            ret = 0xd8
-        } else {
-            ret = SEED_MAP[this.y][this.x]
-        }
-        this.x += this.dx;
-        if (this.index === 0x8000 || (this.index > 0x8000 && (this.index + 1) % 0x8000 === 0)) {
-            return this.NextMask()
-        }
-        return ret
+async function queryKeyInfo(keyData, filename, format) {
+    try {
+        const resp = await fetch("https://stats.ixarea.com/collect/qmcmask/query", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({Format: format, Key: Array.from(keyData), Filename: filename}),
+        });
+        let data = await resp.json();
+        return QmcMaskCreate58(data.Matrix58, data.Super58A, data.Super58B);
+    } catch (e) {
     }
-
 }

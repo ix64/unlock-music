@@ -10,15 +10,15 @@ steps:
   - name: installDependencies
     image: node:lts
     commands:
-      - npm ci
+      - npm ci --verbose --registry=https://registry.npm.taobao.org
 
   - name: build
     image: node:lts
     commands:
       - npm run build
-      - tar -czf legacy.tar.gz ./dist/*
+      - tar -czf legacy.tar.gz -C ./dist .
       - npm run build -- --modern
-      - tar -czf morden.tar.gz ./dist/*
+      - tar -czf morden.tar.gz -C ./dist .
 
 
   - name: release
@@ -44,11 +44,21 @@ steps:
       secret_key:
         from_secret: aws_secret_access_key
       source: dist/**/*
-      target: /
+      strip_prefix: dist/
+      target: /public
       path_style: true
       endpoint: https://fs.sz2.ixarea.com
 
-volumes:
-  - name: cache
-    host:
-      path: /tmp/cache
+
+  - name: upload
+    image: plugins/s3
+    settings:
+      bucket: unlock-music
+      access_key:
+        from_secret: aws_access_key_id
+      secret_key:
+        from_secret: aws_secret_access_key
+      source: ./*.tar.gz
+      target: /build/${DRONE_BUILD_NUMBER}
+      path_style: true
+      endpoint: https://fs.sz2.ixarea.com

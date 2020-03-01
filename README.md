@@ -11,15 +11,16 @@
 - [x] QQMusic Format QQ音乐格式 (.qmc0/.qmc3/.qmcflac/.qmcogg/.tkm)
 - [x] MooMusic Format Moo音乐格式 ([.bkcmp3/.bkcflac](https://github.com/ix64/unlock-music/issues/11))
 - [x] QQMusic Tm Format QQ音乐Tm格式 (.tm0/.tm2/.tm3/.tm6)
-- [ ] QQMusic New Format QQ音乐新格式
-    - [x] .mflac (Partial 部分支持)
-    - [ ] .mgg
+- [x] QQMusic New Format QQ音乐新格式 (Experimental 实验性支持)
+    - [x] .mflac 
+    - [x] .mgg
 - [x] Netease Format 网易云音乐格式 (.ncm)
 - [x] Drag and Drop 拖放文件
 - [x] Play instantly 在线播放
 - [x] Batch unlocking 批量解锁
 - [x] Progressive Web App 渐进式Web应用
 - [x] Complete ID3 for ncm 补全ncm的ID3信息
+- [x] Multi-threads 多线程 
 
 # 使用方法
 ## 下载已构建版本

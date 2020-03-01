@@ -1,12 +1,9 @@
 const NcmDecrypt = require("./ncm");
 const QmcDecrypt = require("./qmc");
 const RawDecrypt = require("./raw");
-const MFlacDecrypt = require("./mflac");
 const TmDecrypt = require("./tm");
 
-export {CommonDecrypt}
-
-async function CommonDecrypt(file) {
+export async function CommonDecrypt(file) {
     let raw_ext = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
     let raw_filename = file.name.substring(0, file.name.lastIndexOf("."));
     let rt_data;
@@ -31,10 +28,9 @@ async function CommonDecrypt(file) {
         case "tkm"://QQ Music Accompaniment M4a
         case "bkcmp3"://Moo Music Mp3
         case "bkcflac"://Moo Music Flac
-            rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
-            break;
         case "mflac"://QQ Music Desktop Flac
-            rt_data = await MFlacDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
+        case "mgg": //QQ Music Desktop Ogg
+            rt_data = await QmcDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
         case "tm2":// QQ Music IOS M4a
         case "tm6":// QQ Music IOS M4a
@@ -43,9 +39,9 @@ async function CommonDecrypt(file) {
         default:
             rt_data = {status: false, message: "不支持此文件格式",}
     }
-    if (rt_data.status) {
-        rt_data.rawExt = raw_ext;
-        rt_data.rawFilename = raw_filename;
-    }
+
+    rt_data.rawExt = raw_ext;
+    rt_data.rawFilename = raw_filename;
+
     return rt_data;
 }

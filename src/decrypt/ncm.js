@@ -1,15 +1,12 @@
 const CryptoJS = require("crypto-js");
 const ID3Writer = require("browser-id3-writer");
-const util = require("./util");
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer} from "./util"
 
+export async function Decrypt(file) {
 
-export {Decrypt};
-
-async function Decrypt(file) {
-
-    const fileBuffer = await util.GetArrayBuffer(file);
+    const fileBuffer = await GetArrayBuffer(file);
     const dataView = new DataView(fileBuffer);
 
     if (dataView.getUint32(0, true) !== 0x4e455443 ||
@@ -26,39 +23,26 @@ async function Decrypt(file) {
     let audioOffset = musicMetaObj.offset + dataView.getUint32(musicMetaObj.offset + 5, true) + 13;
     let audioData = new Uint8Array(fileBuffer, audioOffset);
 
-    for (let cur = 0; cur < audioData.length; ++cur) {
-        audioData[cur] ^= keyBox[cur & 0xff];
-    }
+    for (let cur = 0; cur < audioData.length; ++cur) audioData[cur] ^= keyBox[cur & 0xff];
 
-    if (musicMeta.format === undefined) {
-        const [f, L, a, C] = audioData;
-        if (f === 0x66 && L === 0x4c && a === 0x61 && C === 0x43) {
-            musicMeta.format = "flac";
-        } else {
-            musicMeta.format = "mp3";
-        }
-    }
-    const mime = util.AudioMimeType[musicMeta.format];
+    if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
+
+    const mime = AudioMimeType[musicMeta.format];
 
     const artists = [];
-    musicMeta.artist.forEach(arr => {
-        artists.push(arr[0]);
-    });
-    if (musicMeta.format === "mp3") {
-        audioData = await writeID3(audioData, artists, musicMeta.musicName, musicMeta.album, musicMeta.albumPic)
-    }
+    musicMeta.artist.forEach(arr => artists.push(arr[0]));
+    if (musicMeta.format === "mp3")
+        audioData = await writeID3(audioData, artists, musicMeta.musicName, musicMeta.album, musicMeta.albumPic);
 
     const musicData = new Blob([audioData], {type: mime});
-    const musicUrl = URL.createObjectURL(musicData);
-    const filename = artists.join(" & ") + " - " + musicMeta.musicName + "." + musicMeta.format;
     return {
         status: true,
-        filename: filename,
         title: musicMeta.musicName,
         artist: artists.join(" & "),
+        ext: musicMeta.format,
         album: musicMeta.album,
         picture: musicMeta.albumPic,
-        file: musicUrl,
+        file: URL.createObjectURL(musicData),
         mime: mime
     };
 }
@@ -161,9 +145,12 @@ function getMetaData(dataView, fileBuffer, offset) {
         },
         META_KEY,
         {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7}
-    );
-
-    const result = JSON.parse(plainText.toString(CryptoJS.enc.Utf8).slice(6));
+    ).toString(CryptoJS.enc.Utf8);
+    const labelIndex = plainText.indexOf(":");
+    let result = JSON.parse(plainText.slice(labelIndex + 1));
+    if (plainText.slice(0, labelIndex) === "dj") {
+        result = result.mainMusic;
+    }
     result.albumPic = result.albumPic.replace("http:", "https:");
     return {data: result, offset: offset};
 }
