@@ -1,4 +1,6 @@
 const NcmDecrypt = require("./ncm");
+const KwmDecrypt = require("./kwm");
+const XmDecrypt = require("./xm");
 const QmcDecrypt = require("./qmc");
 const RawDecrypt = require("./raw");
 const TmDecrypt = require("./tm");
@@ -11,9 +13,16 @@ export async function CommonDecrypt(file) {
         case "ncm":// Netease Mp3/Flac
             rt_data = await NcmDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;
-        case "mp3":// Raw Mp3
-        case "flac"://Raw Flac
-        case "m4a":// Raw M4a
+        case "kwm":// Kuwo Mp3/Flac
+            rt_data = await KwmDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
+            break
+        case "xm": // Xiami Wav/M4a/Mp3/Flac
+        case "wav":// Xiami/Raw Wav
+        case "mp3":// Xiami/Raw Mp3
+        case "flac":// Xiami/Raw Flac
+        case "m4a":// Xiami/Raw M4a
+            rt_data = await XmDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
+            break;
         case "ogg":// Raw Ogg
             rt_data = await RawDecrypt.Decrypt(file.raw, raw_filename, raw_ext);
             break;

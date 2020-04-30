@@ -10,7 +10,7 @@
     <!--@formatter:on-->
     <script async src="https://stats.ixarea.com/ixarea-stats.js"></script>
     <title>音乐解锁 - By IXarea</title>
-    <meta content="音乐,解锁,ncm,qmc,qmc0,qmc3,qmcflac,qmcogg,mflac,qq音乐,网易云音乐,加密" name="keywords"/>
+    <meta content="音乐,解锁,ncm,qmc,mgg,mflac,qq音乐,网易云音乐,加密" name="keywords"/>
     <meta content="音乐解锁 - 在任何设备上解锁已购的加密音乐！" name="description"/>
     <!--@formatter:off-->
     <style>#loader{position:absolute;left:50%;top:50%;z-index:1010;margin:-75px 0 0 -75px;border:16px solid #f3f3f3;border-radius:50%;border-top:16px solid #3498db;width:120px;height:120px;animation:spin 2s linear infinite}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#loader-mask{position:absolute;width:100%;height:100%;bottom:0;left:0;right:0;top:0;z-index:1009;background-color:rgba(242,246,252,0.88)}</style>
@@ -22,7 +22,7 @@
     <div id="loader"></div>
     <noscript>
         <img alt=""
-             src="https://stats.ixarea.com/ixarea-stats/report?idsite=2&rec=1&action_name=音乐解锁+-+By+IXarea"
+             src="https://stats.ixarea.com/ixarea-stats/report?rec=1&action_name=音乐解锁-NoJS&idsite=2"
              style="border:0"/>
     </noscript>
     <div hidden id="loader-tips-outdated">
@@ -53,12 +53,12 @@
             var m;
             if (!ua) return true;
             if (/MSIE |Trident\//.exec(ua)) return true; // no IE
-            m = /Edge\/([\d.]+)/.exec(ua); // Edge >= 16
-            if (m && Number(m[1]) < 16) return true;
-            m = /Chrome\/([\d.]+)/.exec(ua); // Chrome >= 50
-            if (m && Number(m[1]) < 50) return true;
-            m = /Firefox\/([\d.]+)/.exec(ua); // Firefox >= 38
-            return m && Number(m[1]) < 38;
+            m = /Edge\/([\d.]+)/.exec(ua); // Edge >= 17
+            if (m && Number(m[1]) < 17) return true;
+            m = /Chrome\/([\d.]+)/.exec(ua); // Chrome >= 58
+            if (m && Number(m[1]) < 58) return true;
+            m = /Firefox\/([\d.]+)/.exec(ua); // Firefox >= 45
+            return m && Number(m[1]) < 45;
         })();
         if (detected) {
             document.getElementById('loader-tips-outdated').hidden = false;

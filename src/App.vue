@@ -41,8 +41,8 @@
                 <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
             </el-row>
             <el-row>
-                目前支持网易云音乐(ncm)、QQ音乐(qmc, mflac, mgg, tkm)以及
-                <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">其他格式</a>。
+                目前支持网易云音乐(ncm), QQ音乐(qmc, mflac, mgg), 虾米音乐(xm), 酷我音乐(.kwm)
+                <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">更多</a>。
             </el-row>
             <el-row>
                 <span>Copyright &copy; 2019-</span><span v-text="(new Date()).getFullYear()"></span> MengYX
@@ -92,12 +92,13 @@
                 try {
                     const resp = await fetch("https://stats.ixarea.com/collect/music/app-version", {
                         method: "POST", headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({Version: this.version})
+                        body: JSON.stringify({"Version": this.version})
                     });
                     updateInfo = await resp.json();
                 } catch (e) {
                 }
-                if (!!updateInfo && !!updateInfo.Found) {
+                if ((!!updateInfo && process.env.NODE_ENV === 'production') && (!!updateInfo.HttpsFound ||
+                    (!!updateInfo.Found && window.location.protocol !== "https:"))) {
                     this.$notify.warning({
                         title: '发现更新',
                         message: '发现新版本 v' + updateInfo.Version +

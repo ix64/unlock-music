@@ -19,7 +19,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     let audioOffset = musicMetaObj.offset + dataView.getUint32(musicMetaObj.offset + 5, true) + 13;
     let audioData = new Uint8Array(fileBuffer, audioOffset);
 
-    for (let cur = 0; cur < audioData.length; ++cur) audioData[cur] ^= keyBox[cur & 0xff];
+    let lenAudioData = audioData.length;
+    for (let cur = 0; cur < lenAudioData; ++cur) audioData[cur] ^= keyBox[cur & 0xff];
 
 
     if (musicMeta.album === undefined) musicMeta.album = "";
