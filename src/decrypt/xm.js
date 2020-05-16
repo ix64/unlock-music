@@ -1,11 +1,4 @@
-import {
-    AudioMimeType,
-    DetectAudioExt,
-    GetArrayBuffer,
-    GetFileInfo,
-    GetMetaCoverURL,
-    IsBytesEqual
-} from "./util";
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, IsBytesEqual} from "./util";
 
 import {Decrypt as RawDecrypt} from "./raw";
 
@@ -24,7 +17,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     if (!IsBytesEqual(MagicHeader, oriData.slice(0, 4)) ||
         !IsBytesEqual(MagicHeader2, oriData.slice(8, 12))) {
         if (raw_ext === "xm") {
-            return {status: false, message: "Not a valid xm file!"}
+            return {status: false, message: "此xm文件已损坏"}
         } else {
             return await RawDecrypt(file, raw_filename, raw_ext, true)
         }
@@ -32,7 +25,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     let typeText = (new TextDecoder()).decode(oriData.slice(4, 8))
     if (!FileTypeMap.hasOwnProperty(typeText)) {
-        return {status: false, message: "New Xiami file category!"}
+        return {status: false, message: "未知的xm文件类型"}
     }
 
     let key = oriData[0xf]
@@ -66,7 +59,8 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         album: musicMeta.common.album,
         picture: imgUrl,
         file: URL.createObjectURL(musicBlob),
-        mime: mime
+        mime: mime,
+        rawExt: "xm"
     }
 }
 

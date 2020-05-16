@@ -50,8 +50,8 @@ export async function CommonDecrypt(file) {
             rt_data = {status: false, message: "不支持此文件格式",}
     }
 
-    rt_data.rawExt = raw_ext;
-    rt_data.rawFilename = raw_filename;
+    if (!rt_data.rawExt) rt_data.rawExt = raw_ext;
+    if (!rt_data.rawFilename) rt_data.rawFilename = raw_filename;
 
     return rt_data;
 }

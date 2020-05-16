@@ -1,14 +1,22 @@
 const CryptoJS = require("crypto-js");
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
-import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetWebImage, WriteMp3Meta} from "./util"
+const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
+import {
+    AudioMimeType,
+    DetectAudioExt,
+    GetArrayBuffer,
+    GetFileInfo,
+    GetWebImage,
+    IsBytesEqual,
+    WriteMp3Meta
+} from "./util"
 
 export async function Decrypt(file, raw_filename, raw_ext) {
     const fileBuffer = await GetArrayBuffer(file);
     const dataView = new DataView(fileBuffer);
 
-    if (dataView.getUint32(0, true) !== 0x4e455443 ||
-        dataView.getUint32(4, true) !== 0x4d414446)
+    if (!IsBytesEqual(MagicHeader, new Uint8Array(fileBuffer, 0, 8)))
         return {status: false, message: "此ncm文件已损坏"};
 
     const keyDataObj = getKeyData(dataView, fileBuffer, 10);
@@ -21,7 +29,6 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     let lenAudioData = audioData.length;
     for (let cur = 0; cur < lenAudioData; ++cur) audioData[cur] ^= keyBox[cur & 0xff];
-
 
     if (musicMeta.album === undefined) musicMeta.album = "";
 
@@ -132,7 +139,7 @@ function getMetaData(dataView, fileBuffer, offset) {
     if (plainText.slice(0, labelIndex) === "dj") {
         result = result.mainMusic;
     }
-    result.albumPic = result.albumPic.replace("http:", "https:");
+    if (!!result.albumPic) result.albumPic = result.albumPic.replace("http://", "https://");
     return {data: result, offset: offset};
 }
 

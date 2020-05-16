@@ -21,17 +21,6 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     let fileKey = oriData.slice(0x18, 0x20)
     let mask = createMaskFromKey(fileKey)
-
-    function Uint8ArrayToString(fileData) {
-        var dataString = "";
-        for (var i = 0; i < fileData.length; i++) {
-            dataString += String.fromCharCode(fileData[i]);
-        }
-
-        return dataString
-    }
-
-
     let audioData = oriData.slice(0x400);
     let lenAudioData = audioData.length;
     for (let cur = 0; cur < lenAudioData; ++cur)
