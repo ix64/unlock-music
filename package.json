@@ -1,6 +1,6 @@
 {
   "name": "unlock-music",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "updateInfo": "改善.mgg解锁算法",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
@@ -32,6 +32,6 @@
     "babel-plugin-component": "^1.1.1",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.11",
-    "workerize-loader": "^1.1.0"
+    "workerize-loader": "^1.2.1"
   }
 }

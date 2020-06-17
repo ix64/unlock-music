@@ -19,7 +19,7 @@ steps:
       - npm run build
       - tar -czf legacy.tar.gz -C ./dist .
       - npm run build -- --modern
-      - tar -czf morden.tar.gz -C ./dist .
+      - tar -czf modern.tar.gz -C ./dist .
 
 
   - name: release
@@ -27,7 +27,7 @@ steps:
     settings:
       base_url: https://git.ixarea.com
       files:
-        - morden.tar.gz
+        - modern.tar.gz
         - legacy.tar.gz
       api_key:
         from_secret: gitea_token
