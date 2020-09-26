@@ -1,7 +1,10 @@
 const CryptoJS = require("crypto-js");
+const MetaFlac = require('metaflac-js');
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
 const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
+import jimp from 'jimp';
+
 import {
     AudioMimeType,
     DetectAudioExt,
@@ -34,17 +37,39 @@ export async function Decrypt(file, raw_filename, raw_ext) {
 
     const artists = [];
     if (!!musicMeta.artist) musicMeta.artist.forEach(arr => artists.push(arr[0]));
-    const info = GetFileInfo(artists.join(" & "), musicMeta.musicName, raw_filename);
+    const info = GetFileInfo(artists.join("; "), musicMeta.musicName, raw_filename);
     if (artists.length === 0) artists.push(info.artist);
 
     if (musicMeta.format === undefined) musicMeta.format = DetectAudioExt(audioData, "mp3");
+    console.log(musicMeta)
 
     const imageInfo = await GetWebImage(musicMeta.albumPic);
-    if (musicMeta.format === "mp3") audioData = await WriteMp3Meta(
-        audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
+    while (!!imageInfo.buffer && imageInfo.buffer.byteLength >= 16 * 1024 * 1024) {
+        let img = await jimp.read(imageInfo.buffer)
+        await img.resize(Math.round(img.getHeight() / 2), jimp.AUTO)
+        imageInfo.buffer = await img.getBufferAsync("image/jpeg")
+    }
+    console.log(imageInfo)
+    try {
+        if (musicMeta.format === "mp3") {
+            audioData = await WriteMp3Meta(
+                audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
+        } else if (musicMeta.format === "flac") {
+            const writer = new MetaFlac(Buffer.from(audioData))
+            if (writer.getTag("TITLE") === "") writer.setTag("TITLE=" + info.title)
+            if (writer.getTag("ALBUM") === "") writer.setTag("ALBUM=" + musicMeta.album)
+            writer.removeTag("ARTIST")
+            artists.forEach(artist => writer.setTag("ARTIST=" + artist))
+            writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
+            audioData = writer.save()
+        }
+    } catch (e) {
+        console.warn("Error while appending cover image to file " + e)
+    }
 
     const mime = AudioMimeType[musicMeta.format];
     const musicData = new Blob([audioData], {type: mime});
+
     return {
         status: true,
         title: info.title,
@@ -139,7 +164,9 @@ function getMetaData(dataView, fileBuffer, offset) {
     if (plainText.slice(0, labelIndex) === "dj") {
         result = result.mainMusic;
     }
-    if (!!result.albumPic) result.albumPic = result.albumPic.replace("http://", "https://");
+    if (!!result.albumPic && result.albumPic !== "")
+        result.albumPic = result.albumPic.replace("http://", "https://") + "?param=500y500";
+
     return {data: result, offset: offset};
 }
 

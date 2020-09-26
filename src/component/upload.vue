@@ -47,12 +47,12 @@
                 this.idle_workers.push(0);
                 // delay to optimize for first loading
                 setTimeout(() => {
-                    for (let i = 1; i < this.thread_num; i++) {
-                        // noinspection JSValidateTypes,JSUnresolvedVariable
-                        this.workers.push(worker().CommonDecrypt);
-                        this.idle_workers.push(i);
-                    }
-                }, 1000);
+                  for (let i = 1; i < this.thread_num; i++) {
+                    // noinspection JSValidateTypes,JSUnresolvedVariable
+                    this.workers.push(worker().CommonDecrypt);
+                    this.idle_workers.push(i);
+                  }
+                }, 5000);
             } else {
                 const dec = require('../decrypt/common');
                 this.workers.push(dec.CommonDecrypt);

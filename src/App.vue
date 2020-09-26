@@ -41,10 +41,11 @@
                 <a href="https://github.com/ix64/unlock-music/wiki/使用提示" target="_blank">使用提示</a>
             </el-row>
             <el-row>
-                目前支持网易云音乐(ncm), QQ音乐(qmc, mflac, mgg), 虾米音乐(xm), 酷我音乐(.kwm)
+                目前支持网易云音乐(ncm), QQ音乐(qmc, mflac, mgg), 酷狗音乐(kgm), 虾米音乐(xm), 酷我音乐(.kwm)
                 <a href="https://github.com/ix64/unlock-music/blob/master/README.md" target="_blank">更多</a>。
             </el-row>
             <el-row>
+                <!--如果进行二次开发，此行版权信息不得移除且应明显地标注于页面上-->
                 <span>Copyright &copy; 2019-</span><span v-text="(new Date()).getFullYear()"></span> MengYX
                 音乐解锁使用
                 <a href="https://github.com/ix64/unlock-music/blob/master/LICENSE" target="_blank">MIT许可协议</a>
@@ -61,6 +62,7 @@
     import preview from "./component/preview"
     import {DownloadBlobMusic, RemoveBlobMusic} from "./component/util"
     import config from "../package"
+    import {IXAREA_API_ENDPOINT} from "./decrypt/util";
 
     export default {
         name: 'app',
@@ -90,7 +92,7 @@
                 if (!!mask) mask.remove();
                 let updateInfo;
                 try {
-                    const resp = await fetch("https://stats.ixarea.com/collect/music/app-version", {
+                    const resp = await fetch(IXAREA_API_ENDPOINT + "/music/app-version", {
                         method: "POST", headers: {"Content-Type": "application/json"},
                         body: JSON.stringify({"Version": this.version})
                     });
@@ -99,15 +101,15 @@
                 }
                 if ((!!updateInfo && process.env.NODE_ENV === 'production') && (!!updateInfo.HttpsFound ||
                     (!!updateInfo.Found && window.location.protocol !== "https:"))) {
-                    this.$notify.warning({
-                        title: '发现更新',
-                        message: '发现新版本 v' + updateInfo.Version +
-                            '<br/>更新详情：' + updateInfo.Detail +
-                            '<br/><a target="_blank" href="' + updateInfo.URL + '">获取更新</a>',
-                        dangerouslyUseHTMLString: true,
-                        duration: 15000,
-                        position: 'top-left'
-                    });
+                  this.$notify.warning({
+                    title: '发现更新',
+                    message: '发现新版本 v' + updateInfo.Version +
+                        '<br/>更新详情：' + updateInfo.Detail +
+                        '<br/><a target="_blank" href="' + updateInfo.URL + '">获取更新</a>',
+                    dangerouslyUseHTMLString: true,
+                    duration: 15000,
+                    position: 'top-left'
+                  });
                 } else {
                     this.$notify.info({
                         title: '离线使用',

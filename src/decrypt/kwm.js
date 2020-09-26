@@ -1,11 +1,4 @@
-import {
-    AudioMimeType,
-    DetectAudioExt,
-    GetArrayBuffer,
-    GetFileInfo,
-    GetMetaCoverURL,
-    IsBytesEqual
-} from "./util";
+import {AudioMimeType, DetectAudioExt, GetArrayBuffer, GetFileInfo, GetMetaCoverURL, IsBytesEqual} from "./util";
 
 const musicMetadata = require("music-metadata-browser");
 const MagicHeader = [

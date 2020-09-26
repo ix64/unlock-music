@@ -16,6 +16,7 @@ export const AudioMimeType = {
     wma: "audio/x-ms-wma",
     wav: "audio/x-wav"
 };
+export const IXAREA_API_ENDPOINT = "https://stats.ixarea.com/apis"
 
 // Also a new draft API: blob.arrayBuffer()
 export async function GetArrayBuffer(blobObject) {
@@ -84,14 +85,14 @@ export async function GetWebImage(pic_url) {
             let buf = await resp.arrayBuffer();
             let objBlob = new Blob([buf], {type: mime});
             let objUrl = URL.createObjectURL(objBlob);
-            return {"buffer": buf, "url": objUrl, "type": mime};
+            return {"buffer": buf, "src": pic_url, "url": objUrl, "type": mime};
         }
     } catch (e) {
     }
-    return {"buffer": null, "url": "", "type": ""}
+    return {"buffer": null, "src": pic_url, "url": "", "type": ""}
 }
 
-export async function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover") {
+export function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover") {
     const writer = new ID3Writer(audioData);
     writer.setFrame("TPE1", artistList)
         .setFrame("TIT2", title)
@@ -107,20 +108,3 @@ export async function WriteMp3Meta(audioData, artistList, title, album, pictureD
     return writer.arrayBuffer;
 }
 
-export function RequestJsonp(url, callback_name = "callback") {
-    return new Promise((resolve, reject) => {
-        let node;
-        window[callback_name] = function (data) {
-            delete window[callback_name];
-            if (node.parentNode) node.parentNode.removeChild(node);
-            resolve(data)
-        };
-        node = document.createElement('script');
-        node.type = "text/javascript";
-        node.src = url;
-        node.addEventListener('error', msg => {
-            reject(msg);
-        });
-        document.head.appendChild(node);
-    });
-}
