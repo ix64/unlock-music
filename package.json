@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.6.4",
-  "updateInfo": "支持QQ音乐微云网盘格式；.kgm解锁的一些优化",
+  "version": "1.7.0",
+  "updateInfo": "适配深色模式；修复.ncm解锁的一些问题",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
@@ -17,20 +17,20 @@
   "dependencies": {
     "base64-js": "^1.3.1",
     "browser-id3-writer": "^4.4.0",
-    "core-js": "^3.6.4",
+    "core-js": "^3.7.0",
     "crypto-js": "^4.0.0",
-    "element-ui": "^2.13.0",
+    "element-ui": "^2.14.0",
     "iconv-lite": "^0.5.1",
     "jimp": "^0.14.0",
     "metaflac-js": "^1.0.5",
-    "music-metadata-browser": "^2.1.4",
+    "music-metadata-browser": "^2.1.6",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.6",
-    "@vue/cli-plugin-pwa": "^4.5.6",
-    "@vue/cli-service": "^4.5.6",
+    "@vue/cli-plugin-babel": "^4.5.8",
+    "@vue/cli-plugin-pwa": "^4.5.8",
+    "@vue/cli-service": "^4.5.8",
     "babel-plugin-component": "^1.1.1",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.12",

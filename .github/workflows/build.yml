@@ -1,0 +1,67 @@
+name: Build
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - "**/*.js"
+      - "**/*.vue"
+      - "public/**/*"
+      - "package-lock.json"
+      - "package.json"
+  pull_request:
+    branches: [ master ]
+    types: [ opened, synchronize, reopened ]
+    paths:
+      - "**/*.js"
+      - "**/*.vue"
+      - "public/**/*"
+      - "package-lock.json"
+      - "package.json"
+
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build: [ legacy, modern ]
+        include:
+          - build: legacy
+            BUILD_ARGS:
+          - build: modern
+            BUILD_ARGS: "-- --modern"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Get npm cache directory
+        id: npm-cache
+        run: echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        run: |
+          npm ci
+          npm run fix-compatibility
+
+      - name: Build
+        env:
+          GZIP: "--best"
+        run: |
+          npm run build ${{ matrix.BUILD_ARGS }}
+          tar -czvf dist.tar.gz -C ./dist .
+
+      - name: Publish artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: unlock-music-${{ matrix.build }}.tar.gz
+          path: ./dist.tar.gz

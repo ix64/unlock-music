@@ -3,6 +3,7 @@ const MetaFlac = require('metaflac-js');
 const CORE_KEY = CryptoJS.enc.Hex.parse("687a4852416d736f356b496e62617857");
 const META_KEY = CryptoJS.enc.Hex.parse("2331346C6A6B5F215C5D2630553C2728");
 const MagicHeader = [0x43, 0x54, 0x45, 0x4E, 0x46, 0x44, 0x41, 0x4D];
+const musicMetadata = require("music-metadata-browser");
 import jimp from 'jimp';
 
 import {
@@ -50,16 +51,22 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         imageInfo.buffer = await img.getBufferAsync("image/jpeg")
     }
     console.log(imageInfo)
+    const mime = AudioMimeType[musicMeta.format]
     try {
+        let musicBlob = new Blob([audioData], {type: mime});
+        const originalMeta = await musicMetadata.parseBlob(musicBlob);
+        let shouldWrite = !originalMeta.common.album && !originalMeta.common.artists && !originalMeta.common.title
         if (musicMeta.format === "mp3") {
             audioData = await WriteMp3Meta(
-                audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic);
+                audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic, !shouldWrite)
         } else if (musicMeta.format === "flac") {
             const writer = new MetaFlac(Buffer.from(audioData))
-            if (writer.getTag("TITLE") === "") writer.setTag("TITLE=" + info.title)
-            if (writer.getTag("ALBUM") === "") writer.setTag("ALBUM=" + musicMeta.album)
-            writer.removeTag("ARTIST")
-            artists.forEach(artist => writer.setTag("ARTIST=" + artist))
+            if (shouldWrite) {
+                writer.setTag("TITLE=" + info.title)
+                writer.setTag("ALBUM=" + musicMeta.album)
+                writer.removeTag("ARTIST")
+                artists.forEach(artist => writer.setTag("ARTIST=" + artist))
+            }
             writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
             audioData = writer.save()
         }
@@ -67,8 +74,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         console.warn("Error while appending cover image to file " + e)
     }
 
-    const mime = AudioMimeType[musicMeta.format];
-    const musicData = new Blob([audioData], {type: mime});
+    const musicData = new Blob([audioData], {type: mime})
 
     return {
         status: true,
@@ -79,7 +85,7 @@ export async function Decrypt(file, raw_filename, raw_ext) {
         picture: imageInfo.url,
         file: URL.createObjectURL(musicData),
         mime: mime
-    };
+    }
 }
 
 
