@@ -93,9 +93,25 @@ export async function GetWebImage(pic_url) {
     return {"buffer": null, "src": pic_url, "url": "", "type": ""}
 }
 
-export async function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover", cover_only = true) {
+export async function WriteMp3Meta(audioData, artistList, title, album, pictureData = null, pictureDesc = "Cover", originalMeta = null) {
     const writer = new ID3Writer(audioData);
-    if (!cover_only) writer.setFrame("TPE1", artistList).setFrame("TIT2", title).setFrame("TALB", album);
+    if (originalMeta !== null) {
+        artistList = originalMeta.common.artists || artistList
+        title = originalMeta.common.title || title
+        album = originalMeta.common.album || album
+        const frames = originalMeta.native['ID3v2.4'] || originalMeta.native['ID3v2.3'] || originalMeta.native['ID3v2.2'] || []
+        frames.forEach(frame => {
+            if (frame.id !== 'TPE1' && frame.id !== 'TIT2' && frame.id !== 'TALB') {
+                try {
+                    writer.setFrame(frame.id, frame.value)
+                } catch (e) {
+                }
+            }
+        })
+    }
+    writer.setFrame('TPE1', artistList)
+        .setFrame('TIT2', title)
+        .setFrame('TALB', album);
     if (pictureData !== null) {
         writer.setFrame('APIC', {
             type: 3,

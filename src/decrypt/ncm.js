@@ -55,10 +55,11 @@ export async function Decrypt(file, raw_filename, raw_ext) {
     try {
         let musicBlob = new Blob([audioData], {type: mime});
         const originalMeta = await musicMetadata.parseBlob(musicBlob);
+        console.log(originalMeta)
         let shouldWrite = !originalMeta.common.album && !originalMeta.common.artists && !originalMeta.common.title
         if (musicMeta.format === "mp3") {
             audioData = await WriteMp3Meta(
-                audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic, !shouldWrite)
+                audioData, artists, info.title, musicMeta.album, imageInfo.buffer, musicMeta.albumPic, shouldWrite ? null : originalMeta)
         } else if (musicMeta.format === "flac") {
             const writer = new MetaFlac(Buffer.from(audioData))
             if (shouldWrite) {
