@@ -1,7 +1,7 @@
 {
-  "name": "音乐解锁 - By IXarea",
+  "name": "音乐解锁",
   "short_name": "音乐解锁",
-  "description": "在任何设备上解锁已购的加密音乐！支持QQ音乐与网易云音乐！",
+  "description": "在任何设备上解锁已购的加密音乐！",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",

@@ -1,7 +1,7 @@
 {
   "name": "unlock-music",
-  "version": "1.7.0",
-  "updateInfo": "适配深色模式；修复.ncm解锁的一些问题",
+  "version": "1.7.2",
+  "updateInfo": "修复.qmc解锁的一些问题",
   "license": "MIT",
   "description": "Unlock encrypted music file in browser.",
   "repository": {
@@ -15,22 +15,24 @@
     "fix-compatibility": "node ./src/fix-compatibility.js"
   },
   "dependencies": {
-    "base64-js": "^1.3.1",
+    "base64-js": "^1.5.1",
     "browser-id3-writer": "^4.4.0",
-    "core-js": "^3.7.0",
+    "core-js": "^3.8.1",
     "crypto-js": "^4.0.0",
-    "element-ui": "^2.14.0",
+    "element-ui": "^2.14.1",
     "iconv-lite": "^0.5.1",
     "jimp": "^0.14.0",
     "metaflac-js": "^1.0.5",
-    "music-metadata-browser": "^2.1.6",
-    "register-service-worker": "^1.7.1",
+    "music-metadata-browser": "^2.1.7",
+    "node-sass": "^4.14.1",
+    "register-service-worker": "^1.7.2",
+    "sass-loader": "^10.0.2",
     "vue": "^2.6.12"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.8",
-    "@vue/cli-plugin-pwa": "^4.5.8",
-    "@vue/cli-service": "^4.5.8",
+    "@vue/cli-plugin-babel": "^4.5.9",
+    "@vue/cli-plugin-pwa": "^4.5.9",
+    "@vue/cli-service": "^4.5.9",
     "babel-plugin-component": "^1.1.1",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.12",

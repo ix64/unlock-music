@@ -7,9 +7,10 @@ assignees: ''
 
 ---
 
-- 请按照此模板填写，否则可能立即被关闭
+* 请按照此模板填写，否则可能立即被关闭
+
 - [x] 我确认已经搜索过Issue不存并确认相同的Issue
-- [x] 我认为这是程序导致的问题（如不确认，请先通过Telegram或者Email进行咨询）
+- [x] 我有证据表明这是程序导致的问题（如不确认，可以在[Discussions](https://github.com/ix64/unlock-music/discussions)内提出）
 
 
 **Bug描述**

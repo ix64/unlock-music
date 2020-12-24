@@ -5,7 +5,8 @@ import {
     GetFileInfo,
     GetMetaCoverURL,
     GetWebImage,
-    IXAREA_API_ENDPOINT
+    IXAREA_API_ENDPOINT,
+    WriteMp3Meta
 } from "./util";
 import {QmcMaskCreate58, QmcMaskDetectMflac, QmcMaskDetectMgg, QmcMaskGetDefault} from "./qmcMask";
 import {fromByteArray as Base64Encode, toByteArray as Base64Decode} from 'base64-js'
@@ -85,20 +86,17 @@ export async function Decrypt(file, raw_filename, raw_ext) {
                 imgUrl = imageInfo.url
                 try {
                     if (ext === "mp3") {
-                        let writer = new ID3Writer(musicDecoded)
-                        writer.setFrame('APIC', {
-                            type: 3,
-                            data: imageInfo.buffer,
-                            description: "Cover",
-                        })
-                        writer.addTag();
-                        musicDecoded = writer.arrayBuffer
+                        musicDecoded = await WriteMp3Meta(musicDecoded,
+                            info.artist.split(" _ "), info.title, "",
+                            imageInfo.buffer, "Cover", musicMeta)
                         musicBlob = new Blob([musicDecoded], {type: mime});
                     } else if (ext === 'flac') {
                         const writer = new MetaFlac(Buffer.from(musicDecoded))
                         writer.importPictureFromBuffer(Buffer.from(imageInfo.buffer))
                         musicDecoded = writer.save()
                         musicBlob = new Blob([musicDecoded], {type: mime});
+                    } else {
+                        console.info("writing metadata for " + ext + " is not being supported for now")
                     }
                 } catch (e) {
                     console.warn("Error while appending cover image to file " + e)

@@ -17,7 +17,7 @@ assignees: ''
 **实现途径**
 
 - 如果没有设计方案，请简要描述实现思路
-- 如果你没有任何的实现思路，请通过Telegram进行讨论
+- 如果你没有任何的实现思路，请通过[Discussions](https://github.com/ix64/unlock-music/discussions)或者Telegram进行讨论
 
 
 **附加信息**

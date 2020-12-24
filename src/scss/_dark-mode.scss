@@ -1,0 +1,166 @@
+/*
+ * name:    样式 - 夜间模式
+ * author:  @KyleBing
+ * date:    2020-11-24
+ */
+
+@media (prefers-color-scheme: dark) {
+  #app{
+    color: $dark-text-info;
+  }
+  body{
+    background-color: $dark-bg;
+  }
+
+  // FORM
+  .el-radio{
+    &__label{
+      color: $dark-text-main;
+    }
+    &__input{
+      color: $dark-text-info;
+      .el-radio__inner{
+        border-color: $dark-border;
+        background-color: $dark-btn-bg;
+      }
+    }
+
+    &.is-checked{
+      .el-radio__inner{
+        background-color: $blue;
+      }
+      .el-radio__label{
+        font-weight: bold;
+      }
+    }
+  }
+
+  .el-checkbox.is-bordered{
+    border-color: $dark-border;
+    .el-checkbox__inner{
+      background-color: $dark-btn-bg;
+      border-color: $dark-border;
+    }
+    &:hover{
+      border-color: $dark-border-highlight;
+      .el-checkbox__inner{
+        background-color: $dark-btn-bg-highlight;
+        border-color: $dark-border-highlight;
+      }
+      .el-checkbox__label{
+        color: $dark-text-info;
+      }
+    }
+    &.is-checked{
+      background-color: $blue;
+      .el-checkbox__inner{
+        border-color: $dark-btn-bg-highlight;
+      }
+      .el-checkbox__label{
+        color: white;
+        font-weight: bold;
+      }
+    }
+  }
+
+
+
+  // BUTTON
+  .el-button{
+    background-color: $dark-btn-bg;
+    border-color: $dark-border;
+    color: $dark-text-main;
+
+    &:active{
+      transform: translateY(2px);
+    }
+
+    &--default{
+      &.is-plain {
+        background-color: $dark-btn-bg;
+        &:hover {
+          background-color: $blue;
+          border-color: $blue;
+          color: white;
+        }
+      }
+    }
+    &--danger{
+      &.is-plain{
+        border-color: $dark-border;
+        background-color: $dark-btn-bg;
+        &:hover{
+          background-color: $red;
+          border-color: $red;
+        }
+      }
+    }
+  }
+
+  // 文件拖放区
+  .el-upload__tip{
+    color: $dark-text-info;
+  }
+  .el-upload-dragger{
+    background-color: $dark-uploader-bg;
+    border-color: $dark-border;
+    .el-upload__text{
+      color: $dark-text-info;
+    }
+    &:hover{
+      background: $dark-uploader-bg-highlight;
+      border-color: $dark-border-highlight;
+    }
+  }
+
+  //TABLE
+  .el-table{
+    background-color: $dark-bg-td;
+    &:before{ // 去除表格末尾的横线
+      content: none;
+    }
+    &__header{
+      th{
+        border-bottom-color: $dark-border !important;
+      }
+    }
+    th{
+      background-color: $dark-bg-th;
+      color: $dark-text-info;
+    }
+    td{
+      border-bottom-color: $dark-border !important;
+    }
+    tr{
+      background-color: $dark-bg-td;
+      color: $dark-text-main;
+      &:hover{
+        td{
+          background-color: $dark-bg-th !important;
+        }
+      }
+    }
+  }
+
+
+  // LINKS
+  a{
+    text-decoration: none;
+    color: darken($dark-color-link, 15%);
+    &:hover{
+      color: $dark-color-link;
+    }
+  }
+
+  // ALERT
+  .el-notification{
+    background-color: $dark-btn-bg-highlight;
+    border-color: $dark-border;
+    &__title{
+      color: white;
+    }
+    &__content{
+      color: $dark-text-info;
+    }
+  }
+}

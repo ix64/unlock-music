@@ -1,0 +1,28 @@
+// COLORS
+$blue      : #409EFF;
+$red       : #F56C6C;
+$green     : #85ce61;
+
+// TEXT
+$text-main : #2C3E50;
+$color-link: $blue;
+
+$fz-main: 14px;
+
+$font-family: "Helvetica Neue", Helvetica, "PingFang SC",
+"Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+
+
+// DARK MODE
+$dark-border                : lighten(black, 25%);
+$dark-border-highlight      : lighten(black, 55%);
+$dark-bg                    : lighten(black, 10%);
+$dark-text-main             : lighten(black, 90%);
+$dark-text-info             : lighten(black, 60%);
+$dark-uploader-bg           : lighten(black, 13%);
+$dark-uploader-bg-highlight : lighten(black, 18%);
+$dark-btn-bg                : lighten(black, 20%);
+$dark-btn-bg-highlight      : lighten(black, 30%);
+$dark-bg-th                 : lighten(black, 18%);
+$dark-bg-td                 : lighten(black, 13%);
+$dark-color-link            : $green;

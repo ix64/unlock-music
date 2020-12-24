@@ -1,0 +1,38 @@
+body{
+  font-family: $font-family;
+  font-size: $fz-main;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  text-align: center;
+  color: $text-main;
+  padding-top: 30px;
+}
+
+#app-footer a {
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+}
+
+#app-footer {
+  text-align: center;
+  font-size: small;
+}
+
+#app-control {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+audio{
+  margin-bottom: 15px; // 播放控件与表格间隔
+}
+
+a{
+  color: darken($color-link, 15%);
+  &:hover{
+    color: $color-link;
+  }
+}

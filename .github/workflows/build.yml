@@ -1,7 +1,6 @@
 name: Build
 on:
   push:
-    branches: [ master ]
     paths:
       - "**/*.js"
       - "**/*.vue"
