@@ -69,3 +69,7 @@ docker run --name unlock-music -d -p 8080:80 ix64/unlock-music
 
 - `npm run serve` 可用于开发
 3. 如需构建浏览器扩展，build完成后还需要执行`npm run make-extension`
+
+## 贡献者变化
+
+[![Contributor over time](https://contributor-graph-api.apiseven.com/contributors-svg?chart=contributorOverTime&repo=unlock-music/unlock-music)](https://www.apiseven.com/en/contributor-graph?chart=contributorOverTime&repo=unlock-music/unlock-music)
