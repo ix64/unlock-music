@@ -19,7 +19,7 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
             rt_data = await NcmDecrypt(file.raw, raw_filename, raw_ext);
             break;
         case "uc":// Netease Cache
-            rt_data = await NcmCacheDecrypt(file.raw, raw_filename, raw_ext);
+            rt_data = await NcmCacheDecrypt(file.raw, raw_filename, "mp3");
             break;
         case "kwm":// Kuwo Mp3/Flac
             rt_data = await KwmDecrypt(file.raw, raw_filename, raw_ext);
@@ -60,7 +60,7 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
             rt_data = await TmDecrypt(file.raw, raw_filename);
             break;
         case "cache"://QQ Music Cache
-            rt_data = await QmcCacheDecrypt(file.raw, raw_filename, raw_ext);
+            rt_data = await QmcCacheDecrypt(file.raw, raw_filename, "mp3");
             break;
         case "vpr":
         case "kgm":
