@@ -1,6 +1,8 @@
 import {Decrypt as NcmDecrypt} from "@/decrypt/ncm";
+import {Decrypt as NcmCacheDecrypt} from "@/decrypt/ncmcache";
 import {Decrypt as XmDecrypt} from "@/decrypt/xm";
 import {Decrypt as QmcDecrypt} from "@/decrypt/qmc";
+import {Decrypt as QmcCacheDecrypt} from "@/decrypt/qmccache";
 import {Decrypt as KgmDecrypt} from "@/decrypt/kgm";
 import {Decrypt as KwmDecrypt} from "@/decrypt/kwm";
 import {Decrypt as RawDecrypt} from "@/decrypt/raw";
@@ -15,6 +17,9 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
     switch (raw_ext) {
         case "ncm":// Netease Mp3/Flac
             rt_data = await NcmDecrypt(file.raw, raw_filename, raw_ext);
+            break;
+        case "uc":// Netease Cache
+            rt_data = await NcmCacheDecrypt(file.raw, raw_filename, raw_ext);
             break;
         case "kwm":// Kuwo Mp3/Flac
             rt_data = await KwmDecrypt(file.raw, raw_filename, raw_ext);
@@ -53,6 +58,9 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
         case "tm2":// QQ Music IOS M4a
         case "tm6":// QQ Music IOS M4a
             rt_data = await TmDecrypt(file.raw, raw_filename);
+            break;
+        case "cache"://QQ Music Cache
+            rt_data = await QmcCacheDecrypt(file.raw, raw_filename, raw_ext);
             break;
         case "vpr":
         case "kgm":
