@@ -24,7 +24,8 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string,
         else {
             file = new Blob([buffer], {type: "application/octet-stream"})
             let ext = raw_filename.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase();
-            return QmcDecrypt(file, raw_filename, ext);
+            if (ext !== "mgg" && ext !== "mflac") throw "不支持的QQ音乐缓存格式：" + raw_filename + ".cache";
+            return QmcDecrypt(file, raw_filename, ext+"cache");
         }
     }
     const tag = await metaParseBlob(file);
