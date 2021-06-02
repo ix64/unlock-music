@@ -59,6 +59,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
     } else {
         audioData = fileData;
         seed = handler.handler(audioData) as QmcMask;
+        if (!seed) throw raw_ext + "格式仅提供实验性支持";
     }
     let musicDecoded = seed.Decrypt(audioData);
 
