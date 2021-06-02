@@ -1,5 +1,7 @@
 import {AudioMimeType, GetArrayBuffer, GetCoverFromFile, GetMetaFromFile, SniffAudioExt} from "@/decrypt/utils.ts";
 
+import {Decrypt as QmcDecrypt} from "@/decrypt/qmc";
+
 import {DecryptResult} from "@/decrypt/entity";
 
 import {parseBlob as metaParseBlob} from "music-metadata-browser";
@@ -19,6 +21,14 @@ export async function Decrypt(file: Blob, raw_filename: string, raw_ext: string,
         }
         ext = SniffAudioExt(buffer, raw_ext);
         if (ext !== raw_ext) file = new Blob([buffer], {type: AudioMimeType[ext]})
+        else {
+            file = new Blob([buffer], {type: "application/octet-stream"})
+            if(raw_filename.endsWith(".mgg.cache")){
+                return QmcDecrypt(file, raw_filename, "mgg");
+            }else if(raw_filename.endsWith(".mflac.cache")){
+                return QmcDecrypt(file, raw_filename, "mflac");
+            }else throw "不支持的QQ音乐缓存文件格式：" + raw_filename;
+        }
     }
     const tag = await metaParseBlob(file);
     const {title, artist} = GetMetaFromFile(raw_filename, tag.common.title, tag.common.artist)
