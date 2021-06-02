@@ -60,7 +60,7 @@ export async function CommonDecrypt(file: FileInfo): Promise<DecryptResult> {
             rt_data = await TmDecrypt(file.raw, raw_filename);
             break;
         case "cache"://QQ Music Cache
-            rt_data = await QmcCacheDecrypt(file.raw, raw_filename, "mp3");
+            rt_data = await QmcCacheDecrypt(file.raw, raw_filename, raw_ext);
             break;
         case "vpr":
         case "kgm":
