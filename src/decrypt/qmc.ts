@@ -25,8 +25,8 @@ interface Handler {
 const HandlerMap: { [key: string]: Handler } = {
     "mgg": {handler: QmcMaskDetectMgg, ext: "ogg", detect: true},
     "mflac": {handler: QmcMaskDetectMflac, ext: "flac", detect: true},
-    "mggcache": {handler: QmcMaskDetectMgg, ext: "ogg", detect: false},
-    "mflaccache": {handler: QmcMaskDetectMflac, ext: "flac", detect: false},
+    "mgg.cache": {handler: QmcMaskDetectMgg, ext: "ogg", detect: false},
+    "mflac.cache": {handler: QmcMaskDetectMflac, ext: "flac", detect: false},
     "qmc0": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
     "qmc2": {handler: QmcMaskGetDefault, ext: "ogg", detect: false},
     "qmc3": {handler: QmcMaskGetDefault, ext: "mp3", detect: false},
